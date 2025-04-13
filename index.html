@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Medical Condition Helper</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f5f5f5;
+      max-width: 700px;
+      margin: auto;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    form {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    input[type="submit"] {
+      padding: 10px 20px;
+      border: none;
+      background-color: #2ecc71;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .result, .error {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .error { border-left: 4px solid red; color: red; }
+  </style>
+</head>
+<body>
+
+  <h1>Medical Condition Helper</h1>
+
+  <form id="medicalForm">
+    <label>Medical Condition:</label>
+    <input type="text" id="condition" placeholder="e.g. flu" required>
+
+    <label>Your Location:</label>
+    <input type="text" id="location" placeholder="e.g. New York" required>
+
+    <input type="submit" value="Get Help">
+  </form>
+
+  <div id="output"></div>
+
+  <script>
+    const db = {
+      headache: {
+        medications: ["Ibuprofen", "Acetaminophen", "Aspirin"],
+        specialists: ["Neurologist", "Primary Care Physician"]
+      },
+      flu: {
+        medications: ["Tamiflu", "Rest", "Fluids"],
+        specialists: ["Family Physician", "General Practitioner"]
+      },
+      diabetes: {
+        medications: ["Metformin", "Insulin", "Glipizide"],
+        specialists: ["Endocrinologist", "Diabetes Specialist"]
+      },
+      asthma: {
+        medications: ["Albuterol", "Fluticasone", "Montelukast"],
+        specialists: ["Pulmonologist", "Allergist"]
+      }
+    };
+
+    document.getElementById('medicalForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const conditionInput = document.getElementById('condition').value.toLowerCase();
+      const locationInput = document.getElementById('location').value;
+      const output = document.getElementById('output');
+      output.innerHTML = "";
+
+      if (!db[conditionInput]) {
+        output.innerHTML = `<div class="error">
+          Sorry, we don’t recognize that condition.<br>
+          Try: ${Object.keys(db).join(", ")}
+        </div>`;
+        return;
+      }
+
+      const info = db[conditionInput];
+      const doctors = [
+        `Dr. Alice - ${conditionInput.charAt(0).toUpperCase() + conditionInput.slice(1)} Specialist in ${locationInput}`,
+        `Dr. James - Experienced in ${conditionInput} - ${locationInput}`
+      ];
+
+      output.innerHTML = `
+        <div class="result">
+          <h2>Results for: ${conditionInput.charAt(0).toUpperCase() + conditionInput.slice(1)}</h2>
+          <p><strong>Medications:</strong> ${info.medications.join(", ")}</p>
+          <p><strong>Specialists:</strong> ${info.specialists.join(", ")}</p>
+          <p><strong>Doctors near ${locationInput}:</strong></p>
+          <ul>
+            ${doctors.map(d => `<li>${d}</li>`).join("")}
+          </ul>
+        </div>
+      `;
+    });
+  </script>
+</body>
+</html>
